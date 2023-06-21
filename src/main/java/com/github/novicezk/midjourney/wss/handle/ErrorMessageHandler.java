@@ -45,6 +45,17 @@ public class ErrorMessageHandler extends MessageHandler {
 			});
 			return;
 		}
+		//如果title中包含against our community standards，则返回可能包含违规内容: + description
+		if (CharSequenceUtil.contains(title, "against our community standards")) {
+			log.warn("检测到可能包含违规内容的信息: {}\n{}\nfooter: {}", title, description, footerText);
+			String reason = "可能包含违规内容: " + description;
+			this.taskQueueHelper.findRunningTask(new TaskCondition()).forEach(task -> {
+				task.fail(reason);
+				task.awake();
+			});
+			return;
+		}
+
 		
 		log.warn("检测到可能异常的信息: {}\n{}\nfooter: {}", title, description, footerText);
 		if (CharSequenceUtil.contains(description, "this job will start")) {
