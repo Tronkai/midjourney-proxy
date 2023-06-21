@@ -34,6 +34,17 @@ public class ErrorMessageHandler extends MessageHandler {
 		if (footer.isPresent()) {
 			footerText = footer.get().getString("text", "");
 		}
+		
+		//如果title中包含Invalid parameter，则返回参数错误: + description
+		if (CharSequenceUtil.contains(title, "Invalid parameter")) {
+			String reason = "参数错误: " + description;
+			this.taskQueueHelper.findRunningTask(new TaskCondition()).forEach(task -> {
+				task.fail(reason);
+				task.awake();
+			});
+			return;
+		}
+		
 		log.warn("检测到可能异常的信息: {}\n{}\nfooter: {}", title, description, footerText);
 		if (CharSequenceUtil.contains(description, "this job will start")) {
 			// mj队列中, 不认为是异常
