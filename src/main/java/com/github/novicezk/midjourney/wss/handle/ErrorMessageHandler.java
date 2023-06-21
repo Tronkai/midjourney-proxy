@@ -37,6 +37,7 @@ public class ErrorMessageHandler extends MessageHandler {
 		
 		//如果title中包含Invalid parameter，则返回参数错误: + description
 		if (CharSequenceUtil.contains(title, "Invalid parameter")) {
+			log.warn("检测到参数错误的信息: {}\n{}\nfooter: {}", title, description, footerText);
 			String reason = "参数错误: " + description;
 			this.taskQueueHelper.findRunningTask(new TaskCondition()).forEach(task -> {
 				task.fail(reason);
@@ -73,7 +74,7 @@ public class ErrorMessageHandler extends MessageHandler {
 			return;
 		}
 		String reason;
-		if (CharSequenceUtil.contains(description, "against our community standards")) {
+		if (CharSequenceUtil.contains(title, "against our community standards")) {
 			reason = "可能包含违规信息";
 		} else {
 			reason = description;
