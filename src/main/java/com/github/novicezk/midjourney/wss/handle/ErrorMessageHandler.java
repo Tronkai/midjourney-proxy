@@ -82,9 +82,11 @@ public class ErrorMessageHandler extends MessageHandler {
 				task.fail(reason);
 				task.awake();
 			});
-			return;
+		} else {
+			reason = description;
 		}
-
+		targetTask.fail(reason);
+		targetTask.awake();
 	}
 
 	@Override
