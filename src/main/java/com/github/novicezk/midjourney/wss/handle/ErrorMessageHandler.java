@@ -74,14 +74,8 @@ public class ErrorMessageHandler extends MessageHandler {
 			return;
 		}
 		String reason;
-
 		if (CharSequenceUtil.contains(title, "against our community standards")) {
-			log.warn("检测到可能包含违规信息的信息: {}\n{}\nfooter: {}", title, description, footerText);
-			String reason = "可能包含违规信息";
-			this.taskQueueHelper.findRunningTask(new TaskCondition()).forEach(task -> {
-				task.fail(reason);
-				task.awake();
-			});
+			reason = "可能包含违规信息";
 		} else {
 			reason = description;
 		}
